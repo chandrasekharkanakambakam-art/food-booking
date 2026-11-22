@@ -1,5 +1,3 @@
-
-import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -8,10 +6,21 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
-// import Checkout from "./pages/CheckOut";
-import Checkout from "./pages/CheckOut.jsx";
+import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
 import Login from "./pages/Login";
+// import { useState } from "react";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// import Navbar from "./components/Navbar";
+// import Footer from "./components/Footer";
+
+// import Home from "./pages/Home";
+// import Menu from "./pages/Menu";
+// import Cart from "./pages/Cart";
+// import Checkout from "./pages/CheckOut.jsx";
+// import MyOrders from "./pages/MyOrders";
+// import Login from "./pages/Login";
 
 function AppContent() {
   const [cart, setCart] = useState([]);
@@ -166,6 +175,7 @@ function AppContent() {
           path="*"
           element={<h1 className="text-center text-2xl mt-10">404 - Page Not Found</h1>}
         />
+
       </Routes>
 
       <Footer />
