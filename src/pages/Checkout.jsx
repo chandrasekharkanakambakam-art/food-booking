@@ -1,161 +1,206 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Checkout({ cart, placeOrder }) {
+function Checkout({ cart = [], placeOrder }) {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
+  const [customer, setCustomer] = useState({
     name: "",
     phone: "",
     address: "",
-    city: "",
-    payment: "Cash on Delivery"
   });
 
-  const total =
-    cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    ) + (cart.length > 0 ? 30 : 0);
+  const [error, setError] = useState("");
+
+  const subtotal = cart.reduce(
+    (total, item) =>
+      total + Number(item.price) * Number(item.quantity || 1),
+    0
+  );
+
+  const delivery = 30;
+  const total = subtotal + delivery;
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
+    setCustomer({
+      ...customer,
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
 
     if (cart.length === 0) {
-      alert("Your cart is empty!");
-      navigate("/menu");
+      setError("Your cart is empty. Please add food items.");
       return;
     }
 
-    if (!/^[6-9]\d{9}$/.test(form.phone)) {
-      alert("Please enter a valid 10-digit Indian mobile number.");
+    if (
+      !customer.name.trim() ||
+      !customer.phone.trim() ||
+      !customer.address.trim()
+    ) {
+      setError("Please fill in all fields.");
       return;
     }
 
-    placeOrder(form);
+    if (!/^[0-9]{10}$/.test(customer.phone)) {
+      setError("Enter a valid 10-digit phone number.");
+      return;
+    }
+
+    if (typeof placeOrder !== "function") {
+      setError("Order function is not connected.");
+      return;
+    }
+
+    placeOrder(customer);
     navigate("/orders");
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-5 py-12">
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+      <div className="max-w-5xl mx-auto">
 
-      <h1 className="text-3xl font-bold mb-8">
-        Checkout Details
-      </h1>
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Complete Your Order
+        </h1>
 
-      <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white shadow p-6 rounded-2xl space-y-5"
-        >
+          {/* Customer Form */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-xl font-bold mb-5">
+              Delivery Information
+            </h2>
 
-          <h2 className="text-xl font-bold">
-            Delivery Information
-          </h2>
+            <form onSubmit={handleSubmit}>
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full border p-3 rounded-lg"
-          />
+              <label className="block font-medium mb-2">
+                Full Name
+              </label>
 
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Mobile Number"
-            value={form.phone}
-            onChange={handleChange}
-            required
-            maxLength={10}
-            className="w-full border p-3 rounded-lg"
-          />
+              <input
+                type="text"
+                name="name"
+                value={customer.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                className="w-full border rounded-lg p-3 mb-4"
+              />
 
-          <textarea
-            name="address"
-            placeholder="Delivery Address"
-            value={form.address}
-            onChange={handleChange}
-            required
-            rows="3"
-            className="w-full border p-3 rounded-lg"
-          />
+              <label className="block font-medium mb-2">
+                Phone Number
+              </label>
 
-          <input
-            type="text"
-            name="city"
-            placeholder="City"
-            value={form.city}
-            onChange={handleChange}
-            required
-            className="w-full border p-3 rounded-lg"
-          />
+              <input
+                type="tel"
+                name="phone"
+                value={customer.phone}
+                onChange={handleChange}
+                placeholder="Enter 10-digit phone number"
+                maxLength="10"
+                className="w-full border rounded-lg p-3 mb-4"
+              />
 
-          <h2 className="font-bold">Payment Method</h2>
+              <label className="block font-medium mb-2">
+                Delivery Address
+              </label>
 
-          <select
-            name="payment"
-            value={form.payment}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg"
-          >
-            <option>Cash on Delivery</option>
-            <option>UPI</option>
-            <option>Credit/Debit Card</option>
-          </select>
+              <textarea
+                name="address"
+                value={customer.address}
+                onChange={handleChange}
+                placeholder="Enter your delivery address"
+                rows="4"
+                className="w-full border rounded-lg p-3 mb-4"
+              />
 
-          <button
-            type="submit"
-            disabled={cart.length === 0}
-            className="w-full bg-orange-500 text-white py-3 rounded-xl font-bold hover:bg-orange-600 disabled:opacity-50"
-          >
-            Place Order - ₹{total}
-          </button>
+              {error && (
+                <p className="text-red-600 text-sm mb-4">
+                  {error}
+                </p>
+              )}
 
-        </form>
+              <button
+                type="submit"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg"
+              >
+                Place Order - ₹{total}
+              </button>
 
-        <div className="bg-orange-50 p-6 rounded-2xl h-fit">
-
-          <h2 className="text-xl font-bold mb-5">
-            Your Order
-          </h2>
-
-          {cart.map((item) => (
-            <div
-              key={item.id}
-              className="flex justify-between mb-4"
-            >
-              <span>
-                {item.name} × {item.quantity}
-              </span>
-              <span>
-                ₹{item.price * item.quantity}
-              </span>
-            </div>
-          ))}
-
-          <hr className="my-4" />
-
-          <div className="flex justify-between font-bold text-xl">
-            <span>Total</span>
-            <span className="text-orange-500">₹{total}</span>
+            </form>
           </div>
 
+          {/* Order Summary */}
+          <div className="bg-white p-6 rounded-xl shadow-md h-fit">
+
+            <h2 className="text-xl font-bold mb-5">
+              Order Summary
+            </h2>
+
+            {cart.length === 0 ? (
+              <p className="text-gray-500">
+                Your cart is empty.
+              </p>
+            ) : (
+              cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center border-b py-3"
+                >
+                  <div>
+                    <h3 className="font-semibold">
+                      {item.name || item.title}
+                    </h3>
+
+                    <p className="text-sm text-gray-500">
+                      ₹{item.price} × {item.quantity || 1}
+                    </p>
+                  </div>
+
+                  <p className="font-semibold">
+                    ₹{Number(item.price) * Number(item.quantity || 1)}
+                  </p>
+                </div>
+              ))
+            )}
+
+            <div className="flex justify-between mt-5 mb-3">
+              <span>Subtotal</span>
+              <span>₹{subtotal}</span>
+            </div>
+
+            <div className="flex justify-between mb-3">
+              <span>Delivery Charge</span>
+              <span>₹{delivery}</span>
+            </div>
+
+            <hr />
+
+            <div className="flex justify-between font-bold text-xl mt-4">
+              <span>Total</span>
+              <span className="text-orange-500">
+                ₹{total}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate("/cart")}
+              className="w-full mt-5 border border-orange-500 text-orange-500 py-3 rounded-lg hover:bg-orange-50"
+            >
+              Back to Cart
+            </button>
+
+          </div>
         </div>
-
       </div>
-
     </div>
   );
 }
+
+export default Checkout;

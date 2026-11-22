@@ -1,26 +1,14 @@
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-
+import Checkout from "./pages/CheckOut";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
 import Login from "./pages/Login";
-// import { useState } from "react";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-// import Navbar from "./components/Navbar";
-// import Footer from "./components/Footer";
-
-// import Home from "./pages/Home";
-// import Menu from "./pages/Menu";
-// import Cart from "./pages/Cart";
-// import Checkout from "./pages/CheckOut.jsx";
-// import MyOrders from "./pages/MyOrders";
-// import Login from "./pages/Login";
 
 function AppContent() {
   const [cart, setCart] = useState([]);
@@ -61,7 +49,7 @@ function AppContent() {
     setCart((prev) =>
       prev
         .map((item) =>
-          item.id === id
+ +         item.id === id
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
@@ -145,17 +133,13 @@ function AppContent() {
             />
           }
         />
-
-        <Route
-          path="/checkout"
-          element={
-            <Checkout
-              cart={cart}
-              placeOrder={placeOrder}
-            />
-          }
-        />
-
+           <Route
+  path="/checkout"
+  element={
+    <Checkout cart={cart} placeOrder={placeOrder} />
+  }
+/>
+      
         <Route
           path="/orders"
           element={
