@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #  Food-Booking Application
 
 A responsive and user-friendly Food Booking Application built using **React.js and Tailwind CSS**. Users can explore food items, browse menus, add food to their cart, place orders, and manage their bookings.
@@ -104,3 +105,6 @@ https://github.com/chandrasekharkanakambakam-art/food-booking
 =======
 # food-booking
 >>>>>>> a39bbf5f22c606a00c7a6a78168512bf0a538f88
+=======
+# food-booking
+>>>>>>> b16fa747ae9b28481b7a25c0cf2add1a8211b8fe
