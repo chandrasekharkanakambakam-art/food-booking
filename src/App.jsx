@@ -8,7 +8,8 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
-import Checkout from "./pages/CheckOut";
+// import Checkout from "./pages/CheckOut";
+import Checkout from "./pages/CheckOut.jsx";
 import MyOrders from "./pages/MyOrders";
 import Login from "./pages/Login";
 
